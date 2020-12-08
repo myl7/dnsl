@@ -1,0 +1,5 @@
+# dnsl
+
+## License
+
+MIT
