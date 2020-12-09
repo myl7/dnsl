@@ -9,6 +9,10 @@ quick_error! {
             source(err)
             from()
         }
+        Join(err: tokio::task::JoinError) {
+            source(err)
+            from()
+        }
         Reason(reason: String) {}
     }
 }

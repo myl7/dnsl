@@ -18,6 +18,12 @@ impl<'a> MsgView<'a> {
         Self { buf }
     }
 
+    pub fn id(&self) -> u16 {
+        let mut bytes = [0u8; 2];
+        bytes.copy_from_slice(self.buf[42..44].as_ref());
+        u16::from_be_bytes(bytes)
+    }
+
     fn qdcount(&self) -> u16 {
         let mut bytes = [0u8; 2];
         bytes.copy_from_slice(self.buf[46..48].as_ref());
