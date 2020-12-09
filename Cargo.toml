@@ -5,3 +5,8 @@ authors = ["myl7 <myl.ustc@gmail.com>"]
 edition = "2018"
 
 [dependencies]
+dotenv = "0.15"
+tokio = { version = "0.3", features = ["full"] }
+
+[dev-dependencies]
+pcap-parser = "0.9"
