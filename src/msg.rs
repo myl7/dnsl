@@ -21,19 +21,19 @@ impl<'a> MsgView<'a> {
 
     pub fn id(&self) -> u16 {
         let mut bytes = [0u8; 2];
-        bytes.copy_from_slice(self.buf[42..44].as_ref());
+        bytes.copy_from_slice(self.buf[0..2].as_ref());
         u16::from_be_bytes(bytes)
     }
 
     fn qdcount(&self) -> u16 {
         let mut bytes = [0u8; 2];
-        bytes.copy_from_slice(self.buf[46..48].as_ref());
+        bytes.copy_from_slice(self.buf[4..6].as_ref());
         u16::from_be_bytes(bytes)
     }
 
     pub fn qds(&self) -> Result<Vec<QD>> {
         let n = self.qdcount();
-        let mut cursor = Cursor::new(self.buf[54..].as_ref());
+        let mut cursor = Cursor::new(self.buf[12..].as_ref());
         let mut qds = vec![];
         for _ in 0..n {
             let mut qname = vec![];
@@ -77,17 +77,14 @@ mod tests {
         loop {
             match reader.next() {
                 Ok((offset, block)) => {
-                    match block {
-                        PcapBlockOwned::NG(block) => match block {
-                            EnhancedPacket(block) => {
-                                let mut buf = Vec::from(block.data);
-                                buf.resize(block.caplen as usize, 0);
-                                let view = MsgView::new(buf.as_ref());
-                                assert!(view.qds().is_ok());
-                            }
-                            _ => (),
-                        },
-                        _ => assert!(false),
+                    if let PcapBlockOwned::NG(block) = block {
+                        if let EnhancedPacket(block) = block {
+                            let buf = block.data[42..].to_vec();
+                            let view = MsgView::new(buf.as_ref());
+                            assert!(view.qds().is_ok());
+                        }
+                    } else {
+                        assert!(false);
                     }
                     reader.consume(offset);
                 }
