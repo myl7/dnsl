@@ -47,7 +47,9 @@ name = "dnsl"
 version = "0.1.0"
 dependencies = [
  "dotenv",
+ "lazy_static",
  "pcap-parser",
+ "quick-error",
  "tokio",
 ]
 
@@ -233,6 +235,12 @@ checksum = "1e0704ee1a7e00d7bb417d0770ea303c1bccbabf0ef1667dae92b5967f5f8a71"
 dependencies = [
  "unicode-xid",
 ]
+
+[[package]]
+name = "quick-error"
+version = "2.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "3ac73b1112776fc109b2e61909bc46c7e1bf0d7f690ffb1676553acce16d5cda"
 
 [[package]]
 name = "quote"
