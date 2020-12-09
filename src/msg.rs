@@ -64,7 +64,7 @@ impl<'a> MsgView<'a> {
 
 #[cfg(test)]
 mod tests {
-    use crate::msg::MsgView;
+    use super::*;
     use pcap_parser::traits::PcapReaderIterator;
     use pcap_parser::Block::EnhancedPacket;
     use pcap_parser::{PcapBlockOwned, PcapError, PcapNGReader};
