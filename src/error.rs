@@ -9,9 +9,7 @@ quick_error! {
             source(err)
             from()
         }
-        Custom(reason: String) {
-            from(s: &str) -> (s.to_string())
-        }
+        Reason(reason: String) {}
     }
 }
 
