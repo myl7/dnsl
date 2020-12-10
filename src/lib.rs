@@ -6,10 +6,14 @@ extern crate quick_error;
 mod config;
 mod error;
 mod msg;
+mod route;
 
 pub use crate::error::Result;
-use crate::msg::MsgView;
+use crate::msg::{MsgView, QD};
+use crate::route::{RouteConfig, AN};
 use std::collections::HashMap;
+use std::fs::File;
+use std::io::BufReader;
 use std::net::SocketAddr;
 use std::sync::{Arc, Mutex};
 use tokio::net::UdpSocket;
@@ -18,6 +22,7 @@ async fn c2s_task(
     listen_sock: Arc<UdpSocket>,
     lookup_sock: Arc<UdpSocket>,
     query_map: Arc<Mutex<HashMap<u16, SocketAddr>>>,
+    route: HashMap<QD, AN>,
 ) -> Result<()> {
     let mut buf = [0u8; config::UDP_MSG_MAX_SIZE];
     loop {
@@ -26,8 +31,7 @@ async fn c2s_task(
         let id = view.id();
         let qds = view.qds()?;
         let qd = qds.first().unwrap();
-        let qname = qd.qname.join(".") as String;
-        if qname == "localhost" {
+        if let Some(_an) = route.get(qd) {
             continue;
         }
         query_map.lock().unwrap().insert(id, addr);
@@ -62,13 +66,18 @@ pub async fn entry() -> Result<()> {
         sock.connect(config::UPSTREAM.clone()).await?;
         sock
     });
+
     let query_map = Arc::new(Mutex::new(HashMap::new()));
+
+    let route_file = File::open(config::ROUTE_FILE.clone())?;
+    let route_config: RouteConfig = serde_yaml::from_reader(BufReader::new(route_file))?;
+    let route = route_config.route();
 
     let c2s_handle = tokio::spawn({
         let listen_sock = listen_sock.clone();
         let lookup_sock = lookup_sock.clone();
         let query_map = query_map.clone();
-        async move { c2s_task(listen_sock, lookup_sock, query_map).await }
+        async move { c2s_task(listen_sock, lookup_sock, query_map, route).await }
     });
     let s2c_handle = tokio::spawn({
         let listen_sock = listen_sock.clone();

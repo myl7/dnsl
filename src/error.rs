@@ -13,6 +13,10 @@ quick_error! {
             source(err)
             from()
         }
+        SerdeYaml(err: serde_yaml::Error) {
+            source(err)
+            from()
+        }
         Reason(reason: String) {}
     }
 }

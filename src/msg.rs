@@ -7,7 +7,7 @@ pub struct MsgView<'a> {
     buf: &'a [u8],
 }
 
-#[derive(Debug)]
+#[derive(Debug, Eq, PartialEq, Hash)]
 pub struct QD {
     pub qname: Vec<String>,
     pub qtype: u16,
