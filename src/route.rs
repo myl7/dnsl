@@ -1,4 +1,4 @@
-use crate::msg::QD;
+use crate::msg::{MsgView, QD};
 use serde::Deserialize;
 use std::collections::HashMap;
 
@@ -28,6 +28,39 @@ impl RR {
             },
             self.clone(),
         )
+    }
+}
+
+impl AN {
+    // TODO: Prebuilt buf.
+    // TODO: Set tc.
+    pub fn buf(&self, view: &MsgView) -> Box<[u8]> {
+        let mut buf = view.header_buf();
+        // Set header.
+        buf[2] = buf[2] | 0b10000000; // Set qr.
+        buf[3] = buf[3] & 0b01110000; // Set ra and rcode.
+        for i in 4..12 {
+            buf[i] = 0; // Reset *count.
+        }
+        let ancount = 1 as u8;
+        buf[6..8].copy_from_slice(&ancount.to_be_bytes());
+
+        // Set answer.
+        self.name
+            .split(".")
+            .map(|s| {
+                buf.push(s.len() as u8);
+                buf.extend(s.clone().as_bytes().iter());
+            })
+            .for_each(drop);
+        buf.push(0);
+        buf.extend(self.rrtype.to_be_bytes().iter());
+        buf.extend(self.rrclass.to_be_bytes().iter());
+        buf.extend(self.ttl.to_be_bytes().iter());
+        buf.extend((self.rdata.len() as u16).to_be_bytes().iter());
+        buf.extend(self.rdata.as_bytes().iter());
+
+        buf.into_boxed_slice()
     }
 }
 

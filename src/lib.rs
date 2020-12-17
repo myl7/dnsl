@@ -21,6 +21,7 @@ use tokio::net::UdpSocket;
 async fn c2s_task(
     listen_sock: Arc<UdpSocket>,
     lookup_sock: Arc<UdpSocket>,
+    interc_sock: UdpSocket,
     query_map: Arc<Mutex<HashMap<u16, SocketAddr>>>,
     route: HashMap<QD, AN>,
 ) -> Result<()> {
@@ -31,7 +32,12 @@ async fn c2s_task(
         let id = view.id();
         let qds = view.qds()?;
         let qd = qds.first().unwrap();
-        if let Some(_an) = route.get(qd) {
+        println!("{:?}", &qd);
+        if let Some(an) = route.get(qd) {
+            let buf = an.buf(&view);
+            interc_sock.send_to(buf.as_ref(), addr).await?;
+            // TODO: Log system
+            println!("Intercepted");
             continue;
         }
         query_map.lock().unwrap().insert(id, addr);
@@ -66,6 +72,7 @@ pub async fn entry() -> Result<()> {
         sock.connect(config::UPSTREAM.clone()).await?;
         sock
     });
+    let interc_sock = UdpSocket::bind(config::INTERC_ADDR.clone()).await?;
 
     let query_map = Arc::new(Mutex::new(HashMap::new()));
 
@@ -77,7 +84,7 @@ pub async fn entry() -> Result<()> {
         let listen_sock = listen_sock.clone();
         let lookup_sock = lookup_sock.clone();
         let query_map = query_map.clone();
-        async move { c2s_task(listen_sock, lookup_sock, query_map, route).await }
+        async move { c2s_task(listen_sock, lookup_sock, interc_sock, query_map, route).await }
     });
     let s2c_handle = tokio::spawn({
         let listen_sock = listen_sock.clone();

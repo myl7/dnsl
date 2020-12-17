@@ -19,6 +19,12 @@ impl<'a> MsgView<'a> {
         Self { buf }
     }
 
+    pub fn header_buf(&self) -> Vec<u8> {
+        let mut bytes = vec![0; 12];
+        bytes.copy_from_slice(self.buf[0..12].as_ref());
+        bytes
+    }
+
     pub fn id(&self) -> u16 {
         let mut bytes = [0u8; 2];
         bytes.copy_from_slice(self.buf[0..2].as_ref());
