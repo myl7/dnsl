@@ -2,6 +2,6 @@
 intercept:
   - name: myl.moe
     rrtype: 5
-    rrclass: 255
+    rrclass: 1
     ttl: 0
     rdata: 'www.myl.moe'

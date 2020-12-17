@@ -42,7 +42,7 @@ impl AN {
         for i in 4..12 {
             buf[i] = 0; // Reset *count.
         }
-        let ancount = 1 as u8;
+        let ancount = 1 as u16;
         buf[6..8].copy_from_slice(&ancount.to_be_bytes());
 
         // Set answer.
