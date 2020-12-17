@@ -2,7 +2,7 @@ mod listen;
 mod lookup;
 mod reply;
 
-use crate::config;
+use crate::config::CONFIG;
 use crate::error::Result;
 use crate::msg::QD;
 use crate::route::AN;
@@ -20,7 +20,7 @@ pub async fn spawn_tasks(
     let lookup_sock = Arc::new(lookup_sock);
 
     let query_map = Arc::new(Mutex::new(HashMap::new()));
-    let (tx, rx) = mpsc::channel(config::UDP_MSG_MAX_SIZE + 5);
+    let (tx, rx) = mpsc::channel(CONFIG.udp_msg_max_size + 5);
 
     let listen_handle = tokio::spawn({
         let listen_sock = listen_sock.clone();

@@ -1,4 +1,4 @@
-use crate::config;
+use crate::config::CONFIG;
 use crate::error::Result;
 use crate::msg::{MsgView, QD};
 use crate::route::AN;
@@ -17,7 +17,7 @@ pub async fn listen_task(
     route: HashMap<QD, AN>,
     reply_chan: Sender<Box<[u8]>>,
 ) -> Result<()> {
-    let mut buf = [0u8; config::UDP_MSG_MAX_SIZE];
+    let mut buf = vec![0u8; CONFIG.udp_msg_max_size];
     loop {
         let (n, addr) = listen_sock.recv_from(buf.as_mut()).await?;
 
