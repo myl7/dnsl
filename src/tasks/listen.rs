@@ -1,7 +1,8 @@
 use crate::config::CONFIG;
 use crate::error::Result;
-use crate::msg::{MsgView, QD};
-use crate::route::AN;
+use crate::models::msg::MsgView;
+use crate::models::qd::QD;
+use crate::models::rr::RR;
 use std::collections::HashMap;
 use std::net::SocketAddr;
 use std::sync::{Arc, Mutex};
@@ -14,12 +15,13 @@ pub async fn listen_task(
     listen_sock: Arc<UdpSocket>,
     lookup_sock: Arc<UdpSocket>,
     query_map: Arc<Mutex<HashMap<u16, SocketAddr>>>,
-    route: HashMap<QD, AN>,
-    reply_chan: Sender<Box<[u8]>>,
+    route: HashMap<QD, RR>,
+    reply_chan: Sender<Vec<u8>>,
 ) -> Result<()> {
     let mut buf = vec![0u8; CONFIG.udp_msg_max_size];
     loop {
         let (n, addr) = listen_sock.recv_from(buf.as_mut()).await?;
+        let tc = n == CONFIG.udp_msg_max_size;
 
         let view = MsgView::new(buf[..n].as_ref());
         let id = view.id();
@@ -28,8 +30,8 @@ pub async fn listen_task(
 
         query_map.lock().unwrap().insert(id, addr);
 
-        if let Some(an) = route.get(qd) {
-            let buf = an.buf(&view);
+        if let Some(rr) = route.get(qd) {
+            let buf = view.reply(rr, tc);
             reply_chan.send(buf).await?;
             // TODO: Log system
             println!("Intercepted");

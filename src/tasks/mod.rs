@@ -4,8 +4,8 @@ mod reply;
 
 use crate::config::CONFIG;
 use crate::error::Result;
-use crate::msg::QD;
-use crate::route::AN;
+use crate::models::qd::QD;
+use crate::models::rr::RR;
 use std::collections::HashMap;
 use std::sync::{Arc, Mutex};
 use tokio::net::UdpSocket;
@@ -14,7 +14,7 @@ use tokio::sync::mpsc;
 pub async fn spawn_tasks(
     listen_sock: UdpSocket,
     lookup_sock: UdpSocket,
-    route: HashMap<QD, AN>,
+    route: HashMap<QD, RR>,
 ) -> Result<()> {
     let listen_sock = Arc::new(listen_sock);
     let lookup_sock = Arc::new(lookup_sock);

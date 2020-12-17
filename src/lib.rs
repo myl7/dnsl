@@ -5,9 +5,10 @@ extern crate quick_error;
 
 mod config;
 mod error;
-mod msg;
+mod models;
 mod route;
 mod tasks;
+mod utils;
 
 pub use crate::error::Result;
 use crate::route::RouteConfig;

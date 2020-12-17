@@ -1,5 +1,5 @@
 use crate::error::Result;
-use crate::msg::MsgView;
+use crate::models::msg::MsgView;
 use std::collections::HashMap;
 use std::net::SocketAddr;
 use std::sync::{Arc, Mutex};
@@ -9,7 +9,7 @@ use tokio::sync::mpsc::Receiver;
 pub async fn reply_task(
     listen_sock: Arc<UdpSocket>,
     query_map: Arc<Mutex<HashMap<u16, SocketAddr>>>,
-    mut reply_chan: Receiver<Box<[u8]>>,
+    mut reply_chan: Receiver<Vec<u8>>,
 ) -> Result<()> {
     loop {
         let buf = reply_chan.recv().await.unwrap();
