@@ -43,12 +43,12 @@ impl<'a> MsgView<'a> {
         let mut qds = vec![];
         for _ in 0..n {
             let mut qname = vec![];
-            let len = 0;
+            let mut len_bytes = [0; 1];
             while {
-                cursor.read_exact([len].as_mut())?;
-                len > 0
+                cursor.read_exact(len_bytes.as_mut())?;
+                len_bytes[0] > 0
             } {
-                let mut buf = vec![0; len as usize];
+                let mut buf = vec![0; len_bytes[0] as usize];
                 cursor.read_exact(buf.as_mut())?;
                 let s = from_utf8(buf.as_ref()).unwrap().to_owned();
                 qname.push(s);
