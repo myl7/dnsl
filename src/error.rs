@@ -18,6 +18,10 @@ quick_error! {
             from()
         }
         Reason(reason: String) {}
+        ChanSend(err: tokio::sync::mpsc::error::SendError<Box<[u8]>>) {
+            source(err)
+            from()
+        }
     }
 }
 
