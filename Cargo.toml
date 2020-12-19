@@ -1,6 +1,6 @@
 [package]
 name = "dnsl"
-version = "0.1.0"
+version = "1.0.0"
 authors = ["myl7 <myl.ustc@gmail.com>"]
 edition = "2018"
 

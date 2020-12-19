@@ -9,14 +9,6 @@ pub struct MsgView<'a> {
     buf: &'a [u8],
 }
 
-enum CountField {
-    QD,
-    #[allow(dead_code)]
-    AN,
-    NS,
-    AR,
-}
-
 impl<'a> MsgView<'a> {
     pub fn new(buf: &'a [u8]) -> Self {
         Self { buf }
@@ -34,23 +26,16 @@ impl<'a> MsgView<'a> {
         u16::from_be_bytes(bytes)
     }
 
-    fn count(&self, field: CountField) -> u16 {
+    fn qdcount(&self) -> u16 {
         let mut bytes = [0u8; 2];
-        let start = match field {
-            CountField::QD => 4,
-            CountField::AN => 6,
-            CountField::NS => 8,
-            CountField::AR => 10,
-        };
-
-        bytes.copy_from_slice(self.buf[start..start + 2].as_ref());
+        bytes.copy_from_slice(self.buf[4..6].as_ref());
         u16::from_be_bytes(bytes)
     }
 
     /// Additionally return qds byte len
     pub fn qds(&self) -> Result<Vec<QD>> {
         let mut cursor = Cursor::new(self.buf[12..].as_ref());
-        let n = self.count(CountField::QD);
+        let n = self.qdcount();
         let mut qds = vec![];
 
         for _ in 0..n {
@@ -100,7 +85,7 @@ impl<'a> MsgView<'a> {
         bytes[10..12].copy_from_slice(&arcount.to_be_bytes());
 
         // Copy qds
-        let qdcount = self.count(CountField::QD);
+        let qdcount = self.qdcount();
         let mut qdlen = 0;
         for _ in 0..qdcount {
             qdlen += name_byte_len(self.buf[12..].as_ref())

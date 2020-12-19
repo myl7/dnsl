@@ -20,5 +20,11 @@ fn main() {
         .status()
         .unwrap();
     assert!(query2.success());
+    let query3 = Command::new("dig")
+        .args(&["cname", "www.myl.moe", "@127.0.0.1", "-p", "10000"])
+        .stdout(Stdio::piped())
+        .status()
+        .unwrap();
+    assert!(query3.success());
     relay_handle.kill().unwrap();
 }
