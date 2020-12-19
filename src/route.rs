@@ -4,14 +4,23 @@ use serde::Deserialize;
 use std::collections::HashMap;
 
 #[derive(Debug, Deserialize)]
+pub struct RouteKey {
+    qd: QD,
+    rr: RR,
+}
+
+#[derive(Debug, Deserialize)]
 pub struct RouteConfig {
-    intercept: Vec<RR>,
+    route: Vec<RouteKey>,
 }
 
 impl RouteConfig {
     pub fn route(&self) -> HashMap<QD, RR> {
-        let map = HashMap::new();
-        // TODO
+        let mut map = HashMap::new();
+        self.route
+            .iter()
+            .map(|k| map.insert(k.qd.clone(), k.rr.clone()))
+            .for_each(drop);
         map
     }
 }

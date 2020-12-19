@@ -1,6 +1,6 @@
 use serde::Deserialize;
 
-#[derive(Debug, Deserialize, Clone)]
+#[derive(Debug, Clone, Deserialize)]
 pub struct RR {
     pub name: String,
     pub rrtype: u16,
@@ -10,7 +10,6 @@ pub struct RR {
 }
 
 impl RR {
-    // TODO: Prebuilt buf.
     pub fn buf(&self, buf: &mut Vec<u8>) -> usize {
         let mut len = 0;
         self.name

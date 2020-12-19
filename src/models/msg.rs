@@ -92,37 +92,23 @@ impl<'a> MsgView<'a> {
         // Set ancount as 1
         let ancount = 1 as u16;
         bytes[6..8].copy_from_slice(&ancount.to_be_bytes());
-
-        let mut pos = 12;
+        // Set nscount as 0
+        let nscount = 0 as u16;
+        bytes[8..10].copy_from_slice(&nscount.to_be_bytes());
+        // Set arcount as 0
+        let arcount = 0 as u16;
+        bytes[10..12].copy_from_slice(&arcount.to_be_bytes());
 
         // Copy qds
         let qdcount = self.count(CountField::QD);
         let mut qdlen = 0;
         for _ in 0..qdcount {
-            qdlen += name_byte_len(self.buf[pos..].as_ref())
+            qdlen += name_byte_len(self.buf[12..].as_ref())
         }
-        bytes.extend(self.buf[pos..pos + qdlen].iter());
-        pos += qdlen;
+        bytes.extend(self.buf[12..12 + qdlen + 4].iter());
 
         // Set ans
-        pos += rr.buf(bytes.as_mut());
-
-        // Copy nss
-        let nscount = self.count(CountField::NS);
-        let mut nslen = 0;
-        for _ in 0..nscount {
-            nslen += name_byte_len(self.buf[pos..].as_ref())
-        }
-        bytes.extend(self.buf[pos..pos + nslen].iter());
-        pos += nslen;
-
-        // Copy ars
-        let arcount = self.count(CountField::AR);
-        let mut arlen = 0;
-        for _ in 0..arcount {
-            arlen += name_byte_len(self.buf[pos..].as_ref())
-        }
-        bytes.extend(self.buf[pos..pos + arlen].iter());
+        rr.buf(bytes.as_mut());
 
         bytes
     }

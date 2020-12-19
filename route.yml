@@ -1,7 +1,12 @@
-# Example intercept config file.
-intercept:
-  - name: myl.moe
-    rrtype: 5
-    rrclass: 1
-    ttl: 0
-    rdata: 'www.myl.moe'
+# Example route config file.
+route:
+  - qd:
+      qname: www.myl.moe
+      qtype: 5
+      qclass: 1
+    rr:
+      name: www.myl.moe
+      rrtype: 5
+      rrclass: 1
+      ttl: 0
+      rdata: "\x04www2\x03myl\x03moe\0"
