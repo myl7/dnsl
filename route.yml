@@ -10,3 +10,13 @@ route:
       rrclass: 1
       ttl: 0
       rdata: "\x04www2\x03myl\x03moe\0"
+  - qd:
+      qname: myl.moe
+      qtype: 1
+      qclass: 1
+    rr:
+      name: myl.moe
+      rrtype: 1
+      rrclass: 1
+      ttl: 0
+      rdata: "\x00\x00\x00\x00"
