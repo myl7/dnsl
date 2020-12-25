@@ -72,8 +72,15 @@ impl<'a> MsgView<'a> {
         } else {
             bytes[2] = bytes[2] & 0b11111101;
         }
-        // Set ra and rcode
+        // Set ra
         bytes[3] = bytes[3] & 0b01110000;
+        // Set rcode
+        if rr.rdata == vec![0, 0, 0, 0] {
+            bytes[3] = bytes[3] & 0b01111101;
+            bytes[3] = bytes[3] | 0b00000101;
+        } else {
+            bytes[3] = bytes[3] & 0b11111000;
+        }
         // Set ancount as 1
         let ancount = 1 as u16;
         bytes[6..8].copy_from_slice(&ancount.to_be_bytes());
