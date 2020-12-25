@@ -34,7 +34,7 @@ pub fn de_name(mut cursor: Cursor<&[u8]>) -> Result<(String, Cursor<&[u8]>)> {
 pub fn name_byte_len(buf: &[u8]) -> usize {
     let mut len = 0;
     while buf[len] > 0 {
-        len += buf[0] as usize + 1;
+        len += buf[len] as usize + 1;
     }
     len + 1
 }
