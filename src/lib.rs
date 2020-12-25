@@ -26,9 +26,10 @@ pub async fn entry() -> Result<()> {
         sock
     };
 
-    let route_file = File::open(CONFIG.route_file.clone())?;
-    let route_config: RouteConfig = serde_yaml::from_reader(BufReader::new(route_file))?;
-    let route = route_config.route();
+    // let route_file = File::open(CONFIG.route_file.clone())?;
+    // let route_config: RouteConfig = serde_yaml::from_reader(BufReader::new(route_file))?;
+    // let route = route_config.route();
+    let route = RouteConfig::from_resolv(&CONFIG.route_file)?;
 
     spawn_tasks(listen_sock, lookup_sock, route).await
 }

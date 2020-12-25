@@ -6,7 +6,7 @@ pub struct RR {
     pub rrtype: u16,
     pub rrclass: u16,
     pub ttl: i32,
-    pub rdata: String,
+    pub rdata: Vec<u8>,
 }
 
 impl RR {
@@ -27,7 +27,7 @@ impl RR {
         buf.extend(self.rrclass.to_be_bytes().iter());
         buf.extend(self.ttl.to_be_bytes().iter());
         buf.extend((self.rdata.len() as u16).to_be_bytes().iter());
-        buf.extend(self.rdata.as_bytes().iter());
+        buf.extend(self.rdata.iter());
         len += 10 + self.rdata.len();
 
         len
