@@ -5,7 +5,7 @@ use serde::Deserialize;
 use std::collections::HashMap;
 use std::fs::File;
 use std::io::{BufRead, BufReader};
-use std::str::{from_utf8, FromStr};
+use std::str::FromStr;
 
 #[derive(Debug, Deserialize)]
 pub struct RouteKey {
@@ -19,6 +19,7 @@ pub struct RouteConfig {
 }
 
 impl RouteConfig {
+    #[allow(dead_code)]
     pub fn route(&self) -> HashMap<QD, RR> {
         let mut map = HashMap::new();
         self.route

@@ -14,8 +14,6 @@ pub use crate::error::Result;
 use crate::route::RouteConfig;
 use crate::tasks::spawn_tasks;
 use config::CONFIG;
-use std::fs::File;
-use std::io::BufReader;
 use tokio::net::UdpSocket;
 
 pub async fn entry() -> Result<()> {

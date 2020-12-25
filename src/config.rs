@@ -16,7 +16,7 @@ impl Config {
             listen_addr: env::var("DNSL_LISTEN").unwrap_or("127.0.0.1:53".to_owned()),
             lookup_addr: env::var("DNSL_LOOKUP").unwrap_or("0.0.0.0:10053".to_owned()),
             upstream: env::var("DNSL_UPSTREAM").unwrap_or("8.8.8.8:53".to_owned()),
-            route_file: env::var("DNSL_ROUTE").unwrap_or("route.yml".to_owned()),
+            route_file: env::var("DNSL_ROUTE").unwrap_or("route".to_owned()),
             udp_msg_max_size: 512,
         }
     }
